@@ -128,71 +128,71 @@ clusters = cluster_points(intersected_points)
 clusters = np.int0(clusters)
 
 final_points = np.int0(clusters)
+final_points = final_points[: len(final_points) - 9] 
+
 corner_image3 = np.copy(image2)
-x_p = []
-y_p = []
+plus = []
+minus = []
+
 for j in range(len(final_points)):
   cv2.circle( corner_image3, (final_points[j][0], final_points[j][1]), 3, (0,255,255), 1)
+  plus.append(final_points[j][0]+final_points[j][1])
+  minus.append(final_points[j][0]-final_points[j][1])
+
+br, i1 = max(plus), plus.index(max(plus))
+bl, i2 = max(minus), minus.index(max(minus))
+tr,i3 = min(minus), minus.index(min(minus))
+tl,i4 = min(plus), plus.index(min(plus))
   
+for j in range(len(final_points)):
+  if(j == i1 or j == i2 or j == i3 or j == i4):
+  	  cv2.circle( corner_image3, (final_points[j][0], final_points[j][1]), 3, (255,255,0), 1)
 
 cv2.imshow("Corners",corner_image3)
 cv2.waitKey(0)
+trp = final_points[i2]
+tlp = final_points[i4]
+brp = final_points[i1]
+blp = final_points[i3]
 
-print(final_points)
-"""Corner detection"""
-"""
 
-# Detect corners (find the R values through an image)
-dst = cv2.cornerHarris(gray, 5, 3, 0.04)
 
-# Dilate corner image to enhance corner points
-dst = cv2.dilate(dst,None)
+"""homography"""
 
-top_percentage =  0.01
-ret, dst = cv2.threshold(dst,top_percentage*dst.max(),255,0)
-dst = np.uint8(dst)
-# find centroids
-ret, labels, stats, centroids = cv2.connectedComponentsWithStats(dst)
-# Criteria
-criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.001)
- 
-# Refine the corners using cv2.cornerSubPix()
-corners = cv2.cornerSubPix(gray,np.float32(centroids),(5,5),(-1,-1),criteria)
- 
-#Convert the centroids and corners to integer
-centroids = np.int0(centroids)
-corners = np.int0(corners)
+rect = np.array(((tlp[0]-4, tlp[1]-4), (trp[0]+4, trp[1]-4), (brp[0]-10, brp[1]-10),
+(blp[0]+5, blp[1]-5)), dtype="float32")
+width = 200
+height = 200
+dst = np.array([[0,0], [width-1,0], [width-1,height-1], [0,height-
+1]],dtype="float32")
+M = cv2.getPerspectiveTransform(rect,dst)
+warped_img = cv2.warpPerspective(image, M, (width, height))
 
-corner_image1 = np.copy(image2)
-for j in range(0,centroids.shape[0]):
-  cv2.circle( corner_image1, (centroids[j][0], centroids[j][1]), 3, (0,0,255), 1)
-
-corner_image2 = np.copy(image2)
-for j in range(0,corners.shape[0]):
-  cv2.circle( corner_image2, (corners[j][0], corners[j][1]), 3, (0,0,255), 1)
-
-cv2.imshow("centroids",corner_image1)
+cv2.imshow("wi",warped_img)
 cv2.waitKey(0)
 
 
-cv2.imshow("subp",corner_image2)
-cv2.waitKey(0)
-
-"""		
-
-
-"""New method"""
 corner_image4 = np.copy(image2)
-cnts,_ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)# OpenCV 4
-cv2.drawContours(corner_image4, cnts, -1, (0,255,0), 2)
-for c in cnts:
-  epsilon = 0.01*cv2.arcLength(c,True)
-  approx = cv2.approxPolyDP(c,epsilon,True)
-  #print(len(approx))
-  x,y,w,h = cv2.boundingRect(approx)
-cv2.drawContours(corner_image4, [approx], 0, (0,255,0),2)
-cv2.imshow('Corners 4',corner_image4)
+"""Cropping"""
+
+board = np.zeros((8,8))
+
+
+for x in range(71):
+	p1 = final_points[x][:]
+	p2 = final_points[x+1][:]
+	p3 = final_points[x+8][:]
+	p4 = final_points[x+9][:]
+	if (final_points[x+1][0]>final_points[x][0]):
+		corner_image4 = cv2.circle( corner_image4,(final_points[x][0],final_points[x][1]), 3, (255,200,0), 1)
+		corner_image4 = cv2.circle( corner_image4,(final_points[x+1][0],final_points[x+1][1]), 3, (255,200,0), 1)
+		corner_image4 = cv2.circle( corner_image4,(final_points[x+9][0],final_points[x+9][1]), 3, (255,200,0), 1)
+		corner_image4 = cv2.circle( corner_image4,(final_points[x+10][0],final_points[x+10][1]), 3, (255,200,0), 1)
+
+
+cv2.imshow("wi",corner_image4)
 cv2.waitKey(0)
+
+
 
 cv2.destroyAllWindows()
-
