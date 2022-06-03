@@ -1,2 +1,2 @@
 # Proyecto-final-VA
-In this project we recognize chess pieces from a webcam
+In this project we recognize chess pieces from frames
