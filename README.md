@@ -7,9 +7,9 @@
 Chess is a game played by amateurs all over the world. In this way certain opening movements and checkmates were developed in order to improve the way players start a game. Traditional practice don’t give an instant feedback of the movements. In this way, the virtualization of the chessboard can help players to improve since openings and plays specify the movement of the pieces and the player can memorize them by getting feedback of their movements.
 
 <div align="center">
-  <a href="#Section 1"><b>Section 1</b></a> |
-  <a href="#Section 2"><b>Section 2</b></a> |
-  <a href="#Section 3"><b>Section 3</b></a> |
+  <a href="#Pipeline"><b>Pipeline</b></a> |
+  <a href="#Results"><b>Results</b></a> |
+  <a href="#How to run"><b>How to run</b></a> |
 
 </div>
 
@@ -32,13 +32,19 @@ Converting the image to gray-scale.
 <div align="center">
   <img src="Image3.jpeg" width="50%">
 </div>
+On the other hand, once recognized the board, the next step is recognizing the pieces. We used Yolov4 because of its accuracy and fast response. We've trained our model on Google Collaboratory with the following dataset: https://public.roboflow.com/object-detection/chess-full available at Roboflow and updated on February 2021. Our best model was trained with 78 epochs and a batch size of 2 and can be downloaded in https://drive.google.com/file/d/1ms2k8fF99hvYL7YZQL3XTeQ0N7-QdrD0/view?usp=sharing .
+<div align="center">
+  <img src="descarga.jfif" width="40%">
+</div>
 
+Finally, we 
 
 ## Results
+
 
 ## How to run
 
 <div align="center">
   <img src="wheel.png" width="40%">
-</div># Final Project Artificial Vision
+</div>
 about
