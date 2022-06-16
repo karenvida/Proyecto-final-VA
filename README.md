@@ -1,2 +1,2 @@
-# Proyecto-final-VA
-In this project we recognize chess pieces from frames
+# Final Project Artificial Vision
+about
