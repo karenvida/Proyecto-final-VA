@@ -15,19 +15,23 @@ from segmentar_ord import crop_images
 from comparision_f import per
 from comparision_f import comp
 from detection_pi import prediction
-
-
+from refresh import convert
+from refresh import get_centers
+from refresh import detect_position
+#from refresh import convert2image
 ap =  argparse.ArgumentParser()
 ap.add_argument("-i", "--input",required=True,help="Insert the path to input image")
 #ap.add_argument("-i2", "--input2",required=True,help="Insert the path to input image")
 args =  vars(ap.parse_args())
 width, height = 800,800
 image = cv2.imread(args["input"])
+background = cv2.imread("chess-board.png") 
+pieces = cv2.imread("Pieces.png") 
 #imagec = cv2.imread(args["input2"])
-image = cv2.resize(image,(width,height)) # In order to resize the image 500x800
+background = cv2.resize(background,(width,height)) 
+pieces = cv2.resize(pieces,(600,200)) # In order to resize the image 500x800
 #imagec = cv2.resize(imagec,(width,height)) # In order to resize the image 500x800
-
-
+image = cv2.resize(image,(width,height)) 
 corner_image = np.copy(image)
 corner_image2 = np.copy(image)
 """ Identifying Hough Lines"""
@@ -71,5 +75,18 @@ for i in range(len(pd)):
 	bases.append([int((x1+x2)/2),int(y2)-20])
 cv2.imshow("centroids2",corner_image2)
 cv2.waitKey(0)
+"""New detection"""
+centers1 = get_centers(image, final_points)
+#MatChess = np.zeros((8,8))
 
+for i in range(len(pd)):
+	
+	#MatChess = MatChess.astype(int)
+	cx = bases[i][0]
+	cy = bases[i][1]
+	r = detect_position(centers1,cx,cy)
+	#print(r)
+	board[r//8][r%8] =convert(pd[i][0])
+print(board)
+#convert2image(board,background,pieces)
 cv2.destroyAllWindows()

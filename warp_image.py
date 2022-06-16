@@ -44,7 +44,8 @@ def lines_image(image):
 	# Define the Hough transform parameters
 	rho = 1
 	theta = np.pi/180 
-	threshold = 150
+	#threshold = 150
+	threshold = 120
 	line_size = 1900 
 
 	# Make a copy the same size as our image to draw on
@@ -100,7 +101,8 @@ def intersection_points(lines):
 def cluster_points(points):
     dists = spatial.distance.pdist(points)
     single_linkage = cluster.hierarchy.single(dists)
-    flat_clusters = cluster.hierarchy.fcluster(single_linkage, 15, 'distance')
+    #flat_clusters = cluster.hierarchy.fcluster(single_linkage, 15, 'distance')
+    flat_clusters = cluster.hierarchy.fcluster(single_linkage, 20, 'distance')
     cluster_dict = defaultdict(list)
     for i in range(len(flat_clusters)):
         cluster_dict[flat_clusters[i]].append(points[i])
@@ -145,6 +147,7 @@ def corners(final_points, image2):
 	
 	return warped_img
 def reset():
+	"""
 	board = np.array([['R','P',0,0,0,0,'p','r'],
 	['N','P',0,0,0,0,'p','n'],
 	['B','P',0,0,0,0,'p','b'],
@@ -153,6 +156,15 @@ def reset():
 	['B','P',0,0,0,0,'p','b'],
 	['N','P',0,0,0,0,'p','n'],
 	['R','P',0,0,0,0,'p','r'],])
+	"""
+	board = np.array([['.','.','.','.','.','.','.','.'],
+	['.','.','.','.','.','.','.','.'],
+	['.','.','.','.','.','.','.','.'],
+	['.','.','.','.','.','.','.','.'],
+	['.','.','.','.','.','.','.','.'],
+	['.','.','.','.','.','.','.','.'],
+	['.','.','.','.','.','.','.','.'],
+	['.','.','.','.','.','.','.','.']])
 	return board
 
 

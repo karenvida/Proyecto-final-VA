@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import cv2
 import requests
-import os
 import shutil
 import zipfile
 import math
@@ -17,17 +16,34 @@ import scipy.spatial as spatial
 import scipy.cluster as cluster
 from collections import defaultdict
 from statistics import mean
-
+import sys
+"""
 ap =  argparse.ArgumentParser()
 ap.add_argument("-i", "--input",required=True,help="Insert the path to input image")
+ap.add_argument("-i2", "--input2",required=True,help="Insert the path to input image")
 args =  vars(ap.parse_args())
 width, height = 800,800
 image = cv2.imread(args["input"])
+imagec = cv2.imread(args["input2"])
 image = cv2.resize(image,(width,height)) # In order to resize the image 500x800
+imagec = cv2.resize(imagec,(width,height)) # In order to resize the image 500x800
+"""
+
+def per(img):
+	nb = np.sum(img == 0)
+	nw = np.sum(img == 255)
+	nnw = np.sum(img != 0)
+	pdb = (nnw+nw)*100/(nw+nnw+nb)
+	return pdb
+def comp(image, imagec):
+	comp = imagec - image
+	frame_HSV = cv2.cvtColor(comp, cv2.COLOR_BGR2HSV)
+	mask = cv2.inRange(frame_HSV, (10, 0, 200), (120, 150, 230))
+	result = cv2.bitwise_and(comp, comp, mask=mask)
+	cv2.imshow("wi",result)
+	cv2.waitKey(0)
 
 
-def crop_images(final_points,image3):
-	# On a chessboard (8x8 squares) there are 9x9 intersection points, therefore, the intersection points are divided into 9 groups.
 
 	final_points.shape = (-1,9,2)
 
@@ -47,34 +63,30 @@ def crop_images(final_points,image3):
 			
 		final_points[k,:,:] = new_cord
 
-
-
+	pi = []
+	pe = []
+	por = 0
 	# Take mini pictures
-	coord = []
-	
 	for k in range(1,len(final_points)):
 		for j in range(1,9):
-
+			image3 = result.copy()
 			Fcoord = np.array([final_points[k-1][j-1], final_points[k-1][j], final_points[k][j-1], final_points[k][j] ])
 			ix = min(Fcoord[:,0])
 			ex = max(Fcoord[:,0])
 			iy = min(Fcoord[:,1])
 			ey = max(Fcoord[:,1])
-			#kimg = image3[iy-60:ey+10,ix-10:ex+10]
-			#kimg = image3[iy:ey,ix:ex]
-			#coorx,coory = int((ix+ex)/2), int((iy+ey)/2)
-			coord.append([int((ix+ex)/2),int((iy+ey)/2)])
-			#cv2.circle( corner_image, (coorx, coory), 3, (0,0,255), 1)
+			kimg = image3[iy:ey,ix:ex]
+			aux = per(kimg)
+			if(aux > por):
+				por = aux
+				pi = pe.copy()
+				pe.clear()
+				pe.append(ix)
+				pe.append(ex)
+				pe.append(iy)
+				pe.append(ey)
 			
-			
-			
-			#cv2.imshow("Mini Images",kimg)
-			#cv2.waitKey(0)
-			#filename = str("board"+str(k)+str(j)+".jpeg")
-			#print(filename)
-			#path = "Mini"
-			#cv2.imwrite(os.path.join(path,filename),kimg)
-	return coord
-
+	print("Coordenadas iniciales: ",pi)
+	print("Coordenadas finales: ",pe)	
 cv2.destroyAllWindows()
 

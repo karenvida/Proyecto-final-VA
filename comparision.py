@@ -16,13 +16,17 @@ import scipy.spatial as spatial
 import scipy.cluster as cluster
 from collections import defaultdict
 from statistics import mean
-
+import sys
 ap =  argparse.ArgumentParser()
 ap.add_argument("-i", "--input",required=True,help="Insert the path to input image")
+ap.add_argument("-i2", "--input2",required=True,help="Insert the path to input image")
 args =  vars(ap.parse_args())
 width, height = 800,800
 image = cv2.imread(args["input"])
+imagec = cv2.imread(args["input2"])
 image = cv2.resize(image,(width,height)) # In order to resize the image 500x800
+imagec = cv2.resize(imagec,(width,height)) # In order to resize the image 500x800
+
 
 
 image2 = np.copy(image)
@@ -128,6 +132,8 @@ clusters = cluster_points(intersected_points)
 clusters = np.int0(clusters)
 
 final_points = np.int0(clusters)
+final_points = final_points[: len(final_points) - 9] 
+
 corner_image3 = np.copy(image2)
 plus = []
 minus = []
@@ -154,9 +160,10 @@ brp = final_points[i1]
 blp = final_points[i3]
 
 
+
 """homography"""
 
-rect = np.array(((tlp[0]+5, tlp[1]+5), (trp[0]-5, trp[1]+5), (brp[0]-5, brp[1]-5),
+rect = np.array(((tlp[0]-4, tlp[1]-4), (trp[0]+4, trp[1]-4), (brp[0]-10, brp[1]-10),
 (blp[0]+5, blp[1]-5)), dtype="float32")
 width = 200
 height = 200
@@ -169,10 +176,82 @@ cv2.imshow("wi",warped_img)
 cv2.waitKey(0)
 
 
-
-
+corner_image4 = np.copy(image2)
 """Cropping"""
 
+board = np.zeros((8,8))
 
+
+for x in range(9):
+	p1 = final_points[x][:]
+	p2 = final_points[x+1][:]
+	p3 = final_points[x+8][:]
+	p4 = final_points[x+9][:]
+	corner_image4 = cv2.circle( corner_image4,(final_points[x][0],final_points[x][1]), 3, (255,200+x,0), 1)
+	corner_image4 = cv2.circle( corner_image4,(final_points[x+1][0],final_points[x+1][1]), 3, (255,200+x,0), 1)
+	corner_image4 = cv2.circle( corner_image4,(final_points[x+9][0],final_points[x+9][1]), 3, (255,200+x,0), 1)
+	corner_image4 = cv2.circle( corner_image4,(final_points[x+10][0],final_points[x+10][1]), 3, (255,200+x,0), 1)
+
+
+cv2.imshow("wi",corner_image4)
+cv2.waitKey(0)
+
+comp = imagec - image
+frame_HSV = cv2.cvtColor(comp, cv2.COLOR_BGR2HSV)
+mask = cv2.inRange(frame_HSV, (10, 0, 200), (120, 150, 230))
+result = cv2.bitwise_and(comp, comp, mask=mask)
+cv2.imshow("wi",result)
+cv2.waitKey(0)
+
+def per(img):
+	nb = np.sum(img == 0)
+	nw = np.sum(img == 255)
+	nnw = np.sum(img != 0)
+	pdb = (nnw+nw)*100/(nw+nnw+nb)
+	return pdb
+
+final_points.shape = (-1,9,2)
+
+for k in range(len(final_points)):
+	xcord = final_points[k,:,0]
+	new_cord = np.zeros((9,2))
+	#print(xcord)
+	ran = len(xcord)
+	for j in range(ran):
+		mini, ind = min(xcord), np.where(xcord==(min(xcord)))[0][0]
+		#print(mini)
+		#print("ind: ", ind)
+		xcord = np.delete(xcord,ind)
+		#print(xcord)
+		new_cord[j][0] = mini
+		new_cord[j][1] = final_points[k][ind][1]
+		
+	final_points[k,:,:] = new_cord
+
+pi = []
+pe = []
+por = 0
+# Take mini pictures
+for k in range(1,len(final_points)):
+	for j in range(1,9):
+		image3 = result.copy()
+		Fcoord = np.array([final_points[k-1][j-1], final_points[k-1][j], final_points[k][j-1], final_points[k][j] ])
+		ix = min(Fcoord[:,0])
+		ex = max(Fcoord[:,0])
+		iy = min(Fcoord[:,1])
+		ey = max(Fcoord[:,1])
+		kimg = image3[iy:ey,ix:ex]
+		aux = per(kimg)
+		if(aux > por):
+			por = aux
+			pi = pe.copy()
+			pe.clear()
+			pe.append(ix)
+			pe.append(ex)
+			pe.append(iy)
+			pe.append(ey)
+		
+print("Coordenadas iniciales: ",pi)
+print("Coordenadas finales: ",pe)	
 cv2.destroyAllWindows()
 

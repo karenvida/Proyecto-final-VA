@@ -9,6 +9,7 @@ import shutil
 import zipfile
 import math
 import tensorflow as tf
+import os
 import torch
 import skimage.exposure as exposure
 import argparse
@@ -87,7 +88,9 @@ if lines is not None:
     # (0,0,255) denotes the colour of the line and 2 denotes the thickness.  
     cv2.line(line_image,(x1,y1),(x2,y2),(0,0,255),2)
 
-
+filename = str("Image1"+".jpeg")
+path = "Mini"
+cv2.imwrite(os.path.join(path,filename),line_image)
 cv2.imshow("Lines",line_image)
 cv2.waitKey(0)
 
@@ -128,6 +131,8 @@ clusters = cluster_points(intersected_points)
 clusters = np.int0(clusters)
 
 final_points = np.int0(clusters)
+final_points = final_points[: len(final_points) - 9] 
+
 corner_image3 = np.copy(image2)
 plus = []
 minus = []
@@ -148,15 +153,19 @@ for j in range(len(final_points)):
 
 cv2.imshow("Corners",corner_image3)
 cv2.waitKey(0)
+filename = str("Image2"+".jpeg")
+path = "Mini"
+cv2.imwrite(os.path.join(path,filename),corner_image3)
 trp = final_points[i2]
 tlp = final_points[i4]
 brp = final_points[i1]
 blp = final_points[i3]
 
 
+
 """homography"""
 
-rect = np.array(((tlp[0]+5, tlp[1]+5), (trp[0]-5, trp[1]+5), (brp[0]-5, brp[1]-5),
+rect = np.array(((tlp[0]-4, tlp[1]-4), (trp[0]+4, trp[1]-4), (brp[0]-10, brp[1]-10),
 (blp[0]+5, blp[1]-5)), dtype="float32")
 width = 200
 height = 200
@@ -167,11 +176,31 @@ warped_img = cv2.warpPerspective(image, M, (width, height))
 
 cv2.imshow("wi",warped_img)
 cv2.waitKey(0)
+filename = str("Image3"+".jpeg")
+path = "Mini"
+cv2.imwrite(os.path.join(path,filename),warped_img)
 
-
-
-
+corner_image4 = np.copy(image2)
 """Cropping"""
+
+board = np.zeros((8,8))
+
+
+for x in range(71):
+	p1 = final_points[x][:]
+	p2 = final_points[x+1][:]
+	p3 = final_points[x+8][:]
+	p4 = final_points[x+9][:]
+	if (final_points[x+1][0]>final_points[x][0]):
+		corner_image4 = cv2.circle( corner_image4,(final_points[x][0],final_points[x][1]), 3, (255,200,0), 1)
+		corner_image4 = cv2.circle( corner_image4,(final_points[x+1][0],final_points[x+1][1]), 3, (255,200,0), 1)
+		corner_image4 = cv2.circle( corner_image4,(final_points[x+9][0],final_points[x+9][1]), 3, (255,200,0), 1)
+		corner_image4 = cv2.circle( corner_image4,(final_points[x+10][0],final_points[x+10][1]), 3, (255,200,0), 1)
+
+
+cv2.imshow("wi",corner_image4)
+cv2.waitKey(0)
+
 
 
 cv2.destroyAllWindows()
