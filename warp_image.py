@@ -144,6 +144,15 @@ def corners(final_points, image2):
 
 	
 	return warped_img
-
+def reset():
+	board = np.array([['R','P',0,0,0,0,'p','r'],
+	['N','P',0,0,0,0,'p','n'],
+	['B','P',0,0,0,0,'p','b'],
+	['Q','P',0,0,0,0,'p','q'],
+	['K','P',0,0,0,0,'p','k'],
+	['B','P',0,0,0,0,'p','b'],
+	['N','P',0,0,0,0,'p','n'],
+	['R','P',0,0,0,0,'p','r'],])
+	return board
 
 
