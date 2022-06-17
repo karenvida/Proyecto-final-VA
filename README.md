@@ -49,6 +49,12 @@ Finally, we obtained the centroids of each checkerboard square and compared them
 ## Results
 
 The final result can be seen in the following image
+<div align="center">
+  <img src="Example_GUI.png" width="80%">
+</div>
+
+
+
 ## How to run
 All you need to do is:
 1. Clone this Git
