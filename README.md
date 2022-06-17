@@ -37,14 +37,21 @@ On the other hand, once recognized the board, the next step is recognizing the p
   <img src="descarga.jfif" width="40%">
 </div>
 
-Finally, we 
+Finally, we obtained the centroids of each checkerboard square and compared them with the censtroid of each detected piece. Dependeing on the smaller distance between those points, we identified the checkerboard square where the piece is in.  As can be seen in the following images:
+
+<div align="center">
+  <img src="centroides_iden.png" width="30%">
+</div>
+<div align="center">
+  <img src="centroides_tablero.png" width="30%">
+</div>
 
 ## Results
 
-
+The final result can be seen in the following image
 ## How to run
-
-<div align="center">
-  <img src="wheel.png" width="40%">
-</div>
-about
+All you need to do is:
+1. Clone this Git
+2. Download the pre trained model in the same file of the clone
+3. Connect your camera and place it near your chessboard (it is better if it doesn't have any piece on it).
+5. Run "GUI.py" and and push "start"
