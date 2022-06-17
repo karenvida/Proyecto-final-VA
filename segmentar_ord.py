@@ -17,14 +17,14 @@ import scipy.spatial as spatial
 import scipy.cluster as cluster
 from collections import defaultdict
 from statistics import mean
-
+"""
 ap =  argparse.ArgumentParser()
 ap.add_argument("-i", "--input",required=True,help="Insert the path to input image")
 args =  vars(ap.parse_args())
 width, height = 800,800
 image = cv2.imread(args["input"])
 image = cv2.resize(image,(width,height)) # In order to resize the image 500x800
-
+"""
 
 def crop_images(final_points,image3):
 	# On a chessboard (8x8 squares) there are 9x9 intersection points, therefore, the intersection points are divided into 9 groups.

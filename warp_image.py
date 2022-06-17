@@ -16,15 +16,15 @@ import scipy.spatial as spatial
 import scipy.cluster as cluster
 from collections import defaultdict
 from statistics import mean
-
+"""
 ap =  argparse.ArgumentParser()
 ap.add_argument("-i", "--input",required=True,help="Insert the path to input image")
 args =  vars(ap.parse_args())
 width, height = 800,800
 image = cv2.imread(args["input"])
 image = cv2.resize(image,(width,height)) # In order to resize the image 500x800
-""" Segmentation by Hough Lines"""
-
+Segmentation by Hough Lines
+"""
 def lines_image(image):
 
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -45,7 +45,7 @@ def lines_image(image):
 	rho = 1
 	theta = np.pi/180 
 	#threshold = 150
-	threshold = 120
+	threshold = 110
 	line_size = 1900 
 
 	# Make a copy the same size as our image to draw on
@@ -102,7 +102,7 @@ def cluster_points(points):
     dists = spatial.distance.pdist(points)
     single_linkage = cluster.hierarchy.single(dists)
     #flat_clusters = cluster.hierarchy.fcluster(single_linkage, 15, 'distance')
-    flat_clusters = cluster.hierarchy.fcluster(single_linkage, 20, 'distance')
+    flat_clusters = cluster.hierarchy.fcluster(single_linkage, 24, 'distance')
     cluster_dict = defaultdict(list)
     for i in range(len(flat_clusters)):
         cluster_dict[flat_clusters[i]].append(points[i])
@@ -142,7 +142,7 @@ def corners(final_points, image2):
 	dst = np.array([[0,0], [width-1,0], [width-1,height-1], [0,height-
 	1]],dtype="float32")
 	M = cv2.getPerspectiveTransform(rect,dst)
-	warped_img = cv2.warpPerspective(image, M, (width, height))
+	warped_img = cv2.warpPerspective(image2, M, (width, height))
 
 	
 	return warped_img
