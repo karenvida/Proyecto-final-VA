@@ -98,8 +98,9 @@ def chessboard(matriz):
 					select(i,j,bk)
 				elif(matriz[i][j] == 'p'):
 					select(i,j,bp)
-	cv2.imshow("chessboard", background)
-	cv2.waitKey(0)
+	#cv2.imshow("chessboard", background)
+	#cv2.waitKey(0)
+	return background
 	
 matriz = [['R','N','B','Q','K','B','N','R'],
 	['P','P','P','P','P','P','P','P'],
