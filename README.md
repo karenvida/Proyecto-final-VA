@@ -54,4 +54,4 @@ All you need to do is:
 1. Clone this Git
 2. Download the pre trained model in the same file of the clone
 3. Connect your camera and place it near your chessboard (it is better if it doesn't have any piece on it).
-5. Run "GUI.py" and and push "start"
+5. Run "main_gui.py" and and push "Take a photo" when moving a piece
